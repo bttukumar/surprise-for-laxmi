@@ -1,0 +1,221 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise for Laxmi ❤️</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: white;
+            color: black;
+            transition: background 1s;
+            overflow: hidden;
+        }
+        #start, #question-box, #proposal, #personal-questions, #love-questions, #name-question {
+            font-size: 24px;
+            font-weight: bold;
+            animation: fadeIn 1s;
+        }
+        #answer-box, #name-box, #personal-answer {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid black;
+        }
+        #submit-btn, button {
+            font-size: 20px;
+            padding: 10px 15px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            background-color: #ff4081;
+            color: white;
+        }
+        button:hover {
+            background: #ff1053;
+        }
+        #proposal {
+            display: none;
+            font-size: 28px;
+            color: white;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 1s;
+        }
+        .hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes confetti {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: confetti 4s linear infinite;
+            color: red;
+        }
+    </style>
+</head>
+<body onclick="startGame()">
+
+    <audio id="click-sound" src="https://www.fesliyanstudios.com/play-mp3/438"></audio>
+    <audio id="proposal-music" src="https://www.fesliyanstudios.com/play-mp3/589"></audio>
+
+    <div id="start">❤️ TAP ANYWHERE TO BEGIN ❤️</div>
+
+    <div id="question-box" class="hidden">
+        <p id="question"></p>
+        <input type="text" id="answer-box">
+        <button id="submit-btn" onclick="checkAnswer()">Submit</button>
+    </div>
+
+    <div id="personal-questions" class="hidden">
+        <p id="personal-question"></p>
+        <input type="text" id="personal-answer">
+        <button id="next-btn" onclick="nextPersonalQuestion()">Next</button>
+    </div>
+
+    <div id="love-questions" class="hidden">
+        <p id="love-question"></p>
+        <button onclick="nextLoveQuestion()">Yes</button>
+        <button onclick="nextLoveQuestion()">Yes</button>
+    </div>
+
+    <div id="name-question" class="hidden">
+        <p>What is his name?</p>
+        <input type="text" id="name-box">
+        <button onclick="validateName()">Submit</button>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+
+    <div id="proposal">
+        💖 Do you wanna marry and be always with me, Laxu? 💖  
+        <br><br>
+        <button onclick="finalResponse()">Yes</button>
+    </div>
+
+    <script>
+        let mathQuestions = [
+            { q: "2 + 3", a: "5" },
+            { q: "3 × 4", a: "12" },
+            { q: "6 - 2", a: "4" },
+            { q: "9 ÷ 3", a: "3" }
+        ];
+        let personalQuestions = [
+            "What is your favorite color?",
+            "Which city do you love?",
+            "Who is your best friend?"
+        ];
+        let correctNames = ["Bittu", "Professor", "Bittu kumar", "My charm", "Babe", "bittu", "professor"];
+        
+        let currentMathIndex = 0;
+        let currentPersonalIndex = 0;
+        let loveStage = 0;
+function startGame() {
+            document.getElementById("click-sound").play();
+            document.getElementById("start").classList.add("hidden");
+            document.getElementById("question-box").classList.remove("hidden");
+            showMathQuestion();
+        }
+
+        function showMathQuestion() {
+            if (currentMathIndex < mathQuestions.length) {
+                document.getElementById("question").innerText = mathQuestions[currentMathIndex].q;
+                document.getElementById("answer-box").value = "";
+            } else {
+                document.getElementById("question-box").classList.add("hidden");
+                document.getElementById("personal-questions").classList.remove("hidden");
+                showPersonalQuestion();
+            }
+        }
+
+        function checkAnswer() {
+            let answer = document.getElementById("answer-box").value;
+            if (answer === mathQuestions[currentMathIndex].a) {
+                currentMathIndex++;
+                showMathQuestion();
+            } else {
+                alert("Try again!");
+            }
+        }
+
+        function showPersonalQuestion() {
+            if (currentPersonalIndex < personalQuestions.length) {
+                document.getElementById("personal-question").innerText = personalQuestions[currentPersonalIndex];
+                document.getElementById("personal-answer").value = "";
+            } else {
+                document.getElementById("personal-questions").classList.add("hidden");
+                document.getElementById("love-questions").classList.remove("hidden");
+                showLoveQuestion();
+            }
+        }
+
+        function nextPersonalQuestion() {
+            currentPersonalIndex++;
+            showPersonalQuestion();
+        }
+
+        function showLoveQuestion() {
+            let loveQuestions = [
+                "Do you like a person?",
+                "Do you like a person who is a boy?"
+            ];
+            if (loveStage < loveQuestions.length) {
+                document.getElementById("love-question").innerText = loveQuestions[loveStage];
+            } else {
+                document.getElementById("love-questions").classList.add("hidden");
+                document.getElementById("name-question").classList.remove("hidden");
+            }
+        }
+
+        function nextLoveQuestion() {
+            loveStage++;
+            showLoveQuestion();
+        }
+
+        function validateName() {
+            let name = document.getElementById("name-box").value.trim();
+            if (correctNames.includes(name)) {
+                document.getElementById("name-question").classList.add("hidden");
+                triggerProposal();
+            } else {
+                document.getElementById("error-message").innerText = "Try again!";
+            }
+        }
+
+        function triggerProposal() {
+            document.body.style.background = "pink";
+            document.getElementById("proposal").style.display = "block";
+            document.getElementById("proposal-music").play();
+            startConfetti();
+        }
+
+        function finalResponse() {
+            document.getElementById("proposal").innerHTML = "<h1>Love you toooo ❤️</h1>";
+        }
+
+        function startConfetti() {
+            for (let i = 0; i < 30; i++) {
+                let heart = document.createElement("div");
+                heart.classList.add("heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.innerHTML = "❤️";
+                document.body.appendChild(heart);
+            }
+        }
+    </script>
+
+</body>
+</html>
